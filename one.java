@@ -30,9 +30,9 @@ public class one {
                 System.out.println("Буква не найдена в массиве.");
             } else {
                 // Получение следующей буквы
-                int nextIndex = (index + 1) % symbols.mySymbols.length; // чтобы циклиться
-                char nextLetter = symbols.mySymbols[nextIndex];
-                System.out.println("Следующая буква: " + nextLetter);
+                int prevIndex = (index - 1 + symbols.mySymbols.length) % symbols.mySymbols.length;
+                char prevLetter = symbols.mySymbols[prevIndex];
+                System.out.println("Предыдущая буква: " + prevLetter);
             }
 
 
