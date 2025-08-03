@@ -1,3 +1,6 @@
+import java.util.Arrays;
+import java.util.Objects;
+
 public class attestation01 {
 public static void main (String[] args){
 }
@@ -33,5 +36,25 @@ class Person {
             this.productPackage = null;
         }
 
+    }
+
+    @Override
+    public String toString() {
+        return "Покупателя зовут " + name + '\'' + "В его кошельке лежит " + money + '\'' + "У него есть " + productPackage; //Делаем так, чтобы при обращении к классу Person выводилась нормальная читаемая информация, а не хэш.
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Person Person = (Person) o;
+        return Double.compare(Person.money, money) == 0 && Objects.equals(name, Person.name) && Arrays.equals(productPackage, Person.productPackage);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(name, money);
+        result = 31 * result + Arrays.hashCode(productPackage);
+        return result;
     }
 }
