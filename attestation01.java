@@ -1,9 +1,8 @@
-import java.util.Arrays;
-import java.util.Objects;
+import java.util.*;
 
 public class attestation01 {
-public static void main (String[] args){
-}
+    public static void main (String[] args){
+    }
 }
 
 class Person {
@@ -56,5 +55,26 @@ class Person {
         int result = Objects.hash(name, money);
         result = 31 * result + Arrays.hashCode(productPackage);
         return result;
+    }
+}
+
+class Product{
+   private String name;
+   private double cost;
+
+   public Product(String name, double cost) {
+
+       if (name == null || name.trim().isEmpty())
+           throw new IllegalArgumentException("Название продукта не может быть пустым");
+
+       if (cost < 0)
+           throw new IllegalArgumentException("Продукт не может стоит меньше 0");
+
+       this.name = name;
+       this.cost = cost;
+   }
+
+    public String getName(){
+       return name;
     }
 }
