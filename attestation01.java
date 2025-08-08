@@ -6,7 +6,6 @@ public class attestation01 {
     public static void main(String[] args) {
 
         Scanner scanner = new Scanner(System.in);
-
         List<Person> persons = new ArrayList<>();
 
         // Ввод покупателей
@@ -31,26 +30,58 @@ public class attestation01 {
             persons.add(person);
         }
 
-
-
-
-// Ввод продуктов:
+        // Ввод продуктов в магазин
         Map<String, Product> productsCatalog = new HashMap<>();
-// Можно заранее задать или вводить динамически. Для примера:
-        productsCatalog.put("Хлеб", new Product("Хлеб", 40));
-        productsCatalog.put("Молоко", new Product("Молоко", 60));
-        productsCatalog.put("Торт", new Product("Торт", 1000));
-        productsCatalog.put("Кофе растворимый", new Product("Кофе растворимый", 879));
-        productsCatalog.put("Масло", new Product("Масло", 150));
-        System.out.println("Доступные продукты:");
+        System.out.println("Введите количество продуктов для добавления в магазин:");
+        int productCount;
+        while (true) {
+            String countInput = scanner.nextLine().trim();
+            try {
+                productCount = Integer.parseInt(countInput);
+                if (productCount < 0) {
+                    System.out.println("Количество не может быть отрицательным. Попробуйте снова:");
+                    continue;
+                }
+                break;
+            } catch (NumberFormatException e) {
+                System.out.println("Некорректный ввод. Введите целое число:");
+            }
+        }
+
+        for (int i = 0; i < productCount; i++) {
+            System.out.println("Введите название продукта:");
+            String productName = scanner.nextLine().trim();
+
+            System.out.println("Введите стоимость продукта " + productName + ":");
+            String costInput = scanner.nextLine().trim();
+            double cost;
+            try {
+                cost = Double.parseDouble(costInput);
+                if (cost < 0) {
+                    System.out.println("Стоимость не может быть отрицательной. Попробуйте заново для этого продукта.");
+                    i--;
+                    continue;
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Некорректный ввод стоимости. Попробуйте заново для этого продукта.");
+                i--;
+                continue;
+            }
+
+            Product product = new Product(productName, cost);
+            productsCatalog.put(productName, product);
+        }
+
+        // Вывод доступных продуктов
+        System.out.println("\nДоступные продукты:");
         for (Map.Entry<String, Product> entry : productsCatalog.entrySet()) {
             System.out.println(entry.getKey() + " - " + entry.getValue().getCost() + " рублей");
         }
 
-// Цикл покупки:
+        // Цикл покупок с возможностью повторения
         while (true) {
             for (Person person : persons) {
-                System.out.println(person.getName() + ", начинаем покупки. Введите название продукта или END:");
+                System.out.println("\n" + person.getName() + ", начинаем покупки. Введите название продукта или END:");
                 while (true) {
                     String input = scanner.nextLine().trim();
                     if (input.equalsIgnoreCase("END")) break;
@@ -70,21 +101,23 @@ public class attestation01 {
                 }
             }
 
-            // Спрашиваем, хотим ли мы продолжить покупки или завершить
-            System.out.println("Хотите продолжить покупки? Введите 'да' или 'нет':");
+            // Спрашиваем о продолжении
+            System.out.println("\nХотите продолжить покупки? Введите 'да' или 'нет':");
             String answer = scanner.nextLine().trim();
             if (!answer.equalsIgnoreCase("да")) {
-                break; // Выходим из внешнего цикла
+                break; // Выходим из цикла покупок
             }
         }
 
-// Вывод итогов:
+        // Итоговые результаты
+        System.out.println("\nИтоги покупок:");
         for (Person p : persons) {
             System.out.println(p.toString());
         }
     }
-    }
+}
 
+// Класс Person
 class Person {
     private String name;
     private double money;
@@ -119,7 +152,6 @@ class Person {
 
     public List<Product> getProductPackage() { return productPackage; }
 
-    // Метод для добавления продукта в пакет
     public boolean addProduct(Product product) {
         if (product.getCost() <= this.money) {
             this.productPackage.add(product);
@@ -143,79 +175,73 @@ class Person {
             for (Product p : productPackage) {
                 sb.append(p.getName()).append(", ");
             }
-            // Удаляем последнюю запятую и пробел
-            sb.setLength(sb.length() - 2);
+            sb.setLength(sb.length() - 2); // Удаляем последнюю запятую и пробел
         }
-
         return sb.toString();
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(Object o) { /* оставляем как есть */
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Person Person = (Person) o;
-        return Double.compare(Person.money, money) == 0 && Objects.equals(name, Person.name) && Objects.equals(productPackage, Person.productPackage);
+        if (!(o instanceof Person)) return false;
+        Person person = (Person) o;
+        return Double.compare(person.money, money) == 0 &&
+                Objects.equals(name, person.name) &&
+                Objects.equals(productPackage, person.productPackage);
     }
 
     @Override
-    public int hashCode() {
-        int result = Objects.hash(name, money);
-        result = 31 * result + Objects.hashCode(productPackage);
-        return result;
+    public int hashCode() { /* оставляем как есть */
+        return Objects.hash(name, money, productPackage);
     }
 }
 
+// Класс Product
 class Product{
-   private String name;
-   private double cost;
+    private String name;
+    private double cost;
 
-   public Product(String name, double cost) {
+    public Product(String name, double cost) {
 
-       if (name == null || name.trim().isEmpty())
-           throw new IllegalArgumentException("Название продукта не может быть пустым");
+        if (name == null || name.trim().isEmpty())
+            throw new IllegalArgumentException("Название продукта не может быть пустым");
 
-       if (cost < 0)
-           throw new IllegalArgumentException("Продукт не может стоит меньше 0");
+        if (cost < 0)
+            throw new IllegalArgumentException("Продукт не может стоить меньше 0");
 
-       this.name = name;
-       this.cost = cost;
-   }
+        this.name = name;
+        this.cost = cost;
+    }
 
-    public String getName()  {return name;}
+    public String getName() { return name; }
 
-
-    public void setName(String name) {
-       if (name == null || name.trim().isEmpty()) {
-           throw new IllegalArgumentException("Название продукта не может может быть пустым!");
+    public void setName(String name){
+        if(name == null || name.trim().isEmpty()){
+            throw new IllegalArgumentException("Название продукта не может быть пустым!");
         }
-       this.name = name;
-
+        this.name= name;
     }
 
-    public double getCost(){
-       return cost;
-    }
+    public double getCost(){ return cost; }
+
     public void setCost(double cost){
-       if(cost < 0){
-           throw new IllegalArgumentException("Стоимость не может быть отрицательной!");
-       }
-       this.cost = cost;
+        if(cost<0){
+            throw new IllegalArgumentException("Стоимость не может быть отрицательной!");
+        }
+        this.cost=cost;
     }
 
     @Override
-    public String toString() {
-       return name + "(" + cost + ")";
+    public String toString() { return name + "(" + cost + ")";}
+
+    @Override
+    public boolean equals(Object i){
+        if(this==i)return true;
+        if(!(i instanceof Product))return false;
+        Product p= (Product)i;
+        return Double.compare(p.cost,cost)==0 && Objects.equals(name,p.name);
     }
 
     @Override
-    public boolean equals(Object i) {
-       if(this == i) return true;
-       if(!(i instanceof Product)) return false;
-       Product product = (Product) i;
-       return Double.compare(product.cost, cost) == 00 && Objects.equals(name, product.name);
-    }
-    @Override
-    public int hashCode(){return Objects.hash(name, cost);}
-
+    public int hashCode(){return Objects.hash(name,cost);}
 }
