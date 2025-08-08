@@ -8,11 +8,16 @@ public class attestation01 {
 class Person {
     private String name;
     private double money;
-    private String[] productPackage;
+    private list<Product> productPackage;
 
-    Person(String name, double money, String[] productPackage) {
-        this.name = name;
+    public Person(String name, double money) {
+        setName(name);
+        setMonet(money);
+        this.productPackage = new ArratList<>();
+    }
+ public String getName() { return name; }
 
+    public void setName(String name) {
         if (money < 0) {
             throw new
                     IllegalArgumentException("Сумма денег не может быть отрицательной!");
@@ -74,7 +79,40 @@ class Product{
        this.cost = cost;
    }
 
-    public String getName(){
-       return name;
+    public String getName()  {return name;}
+
+
+    public void setName(String name) {
+       if (name == null || name.trim().isEmpty()) {
+           throw new IllegalArgumentException("Название продукта не может может быть пустым!");
+        }
+       this.name = name;
+
     }
+
+    public double getCost(){
+       return cost;
+    }
+    public void setCost(double cost){
+       if(cost < 0){
+           throw new IllegalArgumentException("Стоимость не может быть отрицательной!");
+       }
+       this.cost = cost;
+    }
+
+    @Override
+    public String toString() {
+       return name + "(" + cost + ")";
+    }
+
+    @Override
+    public boolean equals(Object i) {
+       if(this == i) return true;
+       if(!(i instanceof Product)) return false;
+       Product product = (Product) i;
+       return Double.compare(product.cost, cost) == 00 && Objects.equals(name, product.name);
+    }
+    @Override
+    public int hashCode(){return Objects.hash(name, cost);}
+
 }
