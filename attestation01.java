@@ -9,31 +9,29 @@ public class attestation01 {
 
         List<Person> persons = new ArrayList<>();
 
-// Ввод покупателей:
-        // Ввод покупателей:
+        // Ввод покупателей
         while (true) {
             System.out.println("Введите имя покупателя или 'end' для завершения:");
-            String name = scanner.nextLine();
+            String name = scanner.nextLine().trim();
             if (name.equalsIgnoreCase("end")) {
-                break; // Выход из цикла
-            }
-            System.out.println("Введите сумму денег:");
-            String moneyInput = scanner.nextLine();
-            if (moneyInput.equalsIgnoreCase("end")) {
-                break; // Можно продолжить или завершить
+                break;
             }
 
+            System.out.println("Введите сумму денег у " + name + ":");
+            String moneyInput = scanner.nextLine().trim();
             double money;
             try {
                 money = Double.parseDouble(moneyInput);
             } catch (NumberFormatException e) {
                 System.out.println("Некорректный ввод суммы. Попробуйте снова.");
-                continue;
+                continue; // возвращаемся к следующему имени
             }
 
             Person person = new Person(name, money);
             persons.add(person);
         }
+
+
 
 
 // Ввод продуктов:
@@ -50,25 +48,33 @@ public class attestation01 {
         }
 
 // Цикл покупки:
-        for (Person person : persons) {
-            System.out.println(person.getName() + ", начинаем покупки. Введите название продукта или END:");
+        while (true) {
+            for (Person person : persons) {
+                System.out.println(person.getName() + ", начинаем покупки. Введите название продукта или END:");
+                while (true) {
+                    String input = scanner.nextLine().trim();
+                    if (input.equalsIgnoreCase("END")) break;
 
-            while (true) {
-                String input = scanner.nextLine().trim();
-                if (input.equalsIgnoreCase("END")) break;
+                    Product product = productsCatalog.get(input);
+                    if (product == null) {
+                        System.out.println("Продукт не найден");
+                        continue;
+                    }
 
-                Product product = productsCatalog.get(input);
-                if (product == null) {
-                    System.out.println("Продукт не найден");
-                    continue;
+                    boolean bought = person.addProduct(product);
+                    if (bought) {
+                        System.out.println(person.getName() + " купил " + product.getName());
+                    } else {
+                        System.out.println(person.getName() + " не может позволить себе " + product.getName());
+                    }
                 }
+            }
 
-                boolean bought = person.addProduct(product);
-                if (bought) {
-                    System.out.println(person.getName() + " купил " + product.getName());
-                } else {
-                    System.out.println(person.getName() + " не может позволить себе " + product.getName());
-                }
+            // Спрашиваем, хотим ли мы продолжить покупки или завершить
+            System.out.println("Хотите продолжить покупки? Введите 'да' или 'нет':");
+            String answer = scanner.nextLine().trim();
+            if (!answer.equalsIgnoreCase("да")) {
+                break; // Выходим из внешнего цикла
             }
         }
 
@@ -77,7 +83,7 @@ public class attestation01 {
             System.out.println(p.toString());
         }
     }
-}
+    }
 
 class Person {
     private String name;
